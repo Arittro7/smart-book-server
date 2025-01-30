@@ -35,7 +35,20 @@ app.post("/add-address", async (req, res) => {
   }
 });
 
-
+// Get all addresses with optional filtering by city or state
+app.get("/addresses", async (req, res) => {
+  try {
+    const { city, state } = req.query;
+    let filter = {};
+    if (city) filter.city = { $regex: city, $options: "i" };
+    if (state) filter.state = { $regex: state, $options: "i" };
+    
+    const addresses = await db.collection("addresses").find(filter).toArray();
+    res.status(200).json(addresses);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching addresses" });
+  }
+});
 
 
 
