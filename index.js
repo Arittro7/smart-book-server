@@ -50,7 +50,22 @@ app.get("/addresses", async (req, res) => {
   }
 });
 
-
+// Fetch city and state based on PIN Code using a working API
+app.get("/get-address/:pinCode", async (req, res) => {
+  try {
+    const { pinCode } = req.params;
+    const response = await axios.get(`https://api.postalpincode.in/pincode/${pinCode}`);
+    const details = response.data[0];
+    if (details.Status === "Success") {
+      const { District, State } = details.PostOffice[0];
+      res.json({ city: District, state: State });
+    } else {
+      res.status(400).json({ error: "Invalid PIN Code" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching address details" });
+  }
+});
 
 app.get('/', (req, res) => {
     res.send('Smart Address Book Server is running');
