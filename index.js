@@ -25,7 +25,15 @@ client.connect().then(() => {
   console.log("Smart Book is connected to MongoDB");
 }).catch(err => console.error("MongoDB connection error:", err));
 
-
+// Add address
+app.post("/add-address", async (req, res) => {
+  try {
+    const result = await db.collection("addresses").insertOne(req.body);
+    res.status(201).json({ message: "Address saved successfully", id: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: "Error saving address" });
+  }
+});
 
 
 
